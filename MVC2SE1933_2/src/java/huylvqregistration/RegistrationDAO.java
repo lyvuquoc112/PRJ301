@@ -19,16 +19,17 @@ public class RegistrationDAO implements Serializable {
 
     public boolean checkLogin(String username, String password)
             throws SQLException, ClassNotFoundException {
-        // truyen hai tham so username va password
-        // return result de de chinh sua
+        //truyền hai tham số username và password
+        //return result để chỉnh sửa
 
         boolean result = false;
 
-        //1. a phai khai bao bien va gan luon
+        //1.a phải khai báo biến và gán luôn
         Connection con = null;// delcare variableand set null 
-        PreparedStatement stm = null; // Cau lenh truyen tham so va co menh de where. Khong chay nap lai tu dau
+        PreparedStatement stm = null; //Dòng cho câu lệnh truyền tham số và có điều kiện where, 
+                                        //prepare không phải chạy lại từ đầu
         ResultSet rs = null;
-        // chi hay doi tham so
+        // chỉ thay đổi tham số
         try {
             //1. Model connect DB
             con = DBHelper.getConnection(); // code process object 
@@ -38,8 +39,8 @@ public class RegistrationDAO implements Serializable {
                 String sql = "select username "
                         + "from Registration "
                         + "where username = ?"
-                        + "and password = ?";// liet ke user name trong bang resistraion voi dieu kien username = A va password = B
-                // 2.2 load SQL String into Statement object (cau lenh khong co tham so, moi lan goi la nap vao)
+                        + "and password = ?";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
+                // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
                 stm = con.prepareStatement(sql);
                 stm.setString(1, username);
                 stm.setString(2, password);
@@ -63,7 +64,7 @@ public class RegistrationDAO implements Serializable {
                 stm.close();
             }
             if (con != null) {
-                con.close();// 1.b dong doi tuong bang moi cach
+                con.close();// 1.b đóng đối tường bằng mọi cách
             }
         }
 

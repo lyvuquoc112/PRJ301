@@ -4,10 +4,11 @@
  */
 package huylvq.controller;
 
-import huylvqregistration.RegistrationDAO;
+import huylvq.registration.RegistrationDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author hanly
  */
 public class LoginServlet extends HttpServlet {
+
+    private final String SEARCH_PAGE = "search.html";
+    private final String INVALID_PAGE = "invalid.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,31 +36,36 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        // servlet khong duoc viet giao dien theo kei html
+        String url = INVALID_PAGE;
+        //Servlet không được viết giao diện tĩnh
+
+        //Parameter đang ở trong request message ở container
+        //Lấy dữ liệu xuống bằng name của parameter (name của parameter là kiểu String)
+        // hạn chế ghi, nên copy và paste để tránh sai tên
+        //Step 1. get all user's infomation
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
-        String button = request.getParameter("btAction");
-        // parameter dang o trong request messange o container 
-        // lay du lieu xuong bang name cua parameter (name cua parameter la kieu string)
-        // han che ghi, nen copy va paste de tranh sai ten
-        
-        //Step 1. get all user's infomation
-        
-        try{
-        //Step 2. controll call method's model
-        // Step 2.1: controller news DAO object
+        try {
+            //Step 2. controll call method's model
+            // Step 2.1: controller news DAO object
             RegistrationDAO dao = new RegistrationDAO();
-        // Step 2.2: controller calls method of DAO's object
+            // Step 2.2: controller calls method of DAO's object
             boolean result = dao.checkLogin(username, password);
-        // Step 3: Process result   
-        }catch(SQLException ex){
+            // Step 3: Process result   
+
+            if (result) {
+                url = SEARCH_PAGE;
+            }// username and password are existed
+        } catch (SQLException ex) {
             ex.printStackTrace();
-        }catch(ClassNotFoundException ex){
+        } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } finally {
+//            response.sendRedirect(url);
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
+            out.close();
         }
-        finally {
-               out.close();
-            }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -93,7 +102,6 @@ public class LoginServlet extends HttpServlet {
      *
      * @return a String containing servlet description
      */
-    
     @Override
     public String getServletInfo() {
         return "Short description";

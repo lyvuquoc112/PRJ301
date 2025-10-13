@@ -10,10 +10,10 @@
     </servlet-mapping>
     <session-config>
         <session-timeout>
-            30
+            30 <!--30 phút-->
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>login.html</welcome-file>
+        <welcome-file>DispatchServlet</welcome-file>
     </welcome-file-list>
 </web-app>

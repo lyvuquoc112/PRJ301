@@ -11,10 +11,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     </head>
     <body>
         <h1>Login Page</h1>
-        <!-- action laf url nen cai ten trong do cung la url
-        de biet url nay chi den ten nao, thi vao web.xml de xem no mapping toi dau
+        <!-- Action là URL nên cái tên trong đó cũng là URL
+        để biết URL này chỉ đến tên nào, thì vào web.xml để xem nó mapping tới đâu
         -->
-        <form action="LoginServlet" method="POST">
+        <form action="DispatchServlet" method="POST">
             Username <input type="text" name="txtUsername" value="" /> <br>
             Password <input type="password" name="txtPassword" value="" /> <br>
             <input type="submit" value="Login" name="btAction" />
