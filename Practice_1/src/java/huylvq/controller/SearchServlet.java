@@ -4,11 +4,14 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistrationDAO;
+import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,15 +20,9 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "DispatchServlet", urlPatterns = {"/DispatchServlet"}) // dòng này sẽ là comment nếu
-// cái gì ít thay đổi thì dùng anomytaion
-// cái gì thường xuyên bị thay đổi thì dùng web.xml
-public class DispatchServlet extends HttpServlet {
-
-    private final String LOGIN_PAGE = "login.html";
-    private final String LOGIN_CONTROLLER = "LoginServlet";
-    private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
-    private final String DELETE_CONTROLLER = "DeleteServlet";
+public class SearchServlet extends HttpServlet {
+    private final String SEARCH_PAGE = "search.html";
+    private final String SEARCH_RESULT = "search.jsp";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,26 +35,22 @@ public class DispatchServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE; // default page
-        //1. which button did user click?
-        String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
-        try {
-            if (button == null) {
-                // do nothing
-            } else {
-                switch (button) {
-                    case "Login":
-                        url = LOGIN_CONTROLLER;
-                        break;
-                    case "Search":
-                        url = SEARCH_LASTNAME_CONTROLLER;
-                        break;
-                    case "Delete":
-                        url = DELETE_CONTROLLER;
-
-                }
-            }// first request
-        } finally {
+        String url = SEARCH_PAGE;
+        String lastname = request.getParameter("txtsearchValue");
+        try  {
+           if(lastname.trim().length()>0){
+               RegistrationDAO dao = new RegistrationDAO();
+               dao.searchLastname(lastname);
+               List<RegistrationDTO> dto = dao.getAccounts();
+               request.setAttribute("SEARCH_RESULT", dto);
+               url = SEARCH_RESULT;
+           }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }catch (ClassNotFoundException ex){
+            ex.printStackTrace();
+        }
+        finally{
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
         }

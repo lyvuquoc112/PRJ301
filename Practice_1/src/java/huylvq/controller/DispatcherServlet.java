@@ -17,15 +17,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "DispatchServlet", urlPatterns = {"/DispatchServlet"}) // dòng này sẽ là comment nếu
-// cái gì ít thay đổi thì dùng anomytaion
-// cái gì thường xuyên bị thay đổi thì dùng web.xml
-public class DispatchServlet extends HttpServlet {
-
+@WebServlet(name = "DispatcherServlet", urlPatterns = {"/DispatcherServlet"})
+public class DispatcherServlet extends HttpServlet {
     private final String LOGIN_PAGE = "login.html";
     private final String LOGIN_CONTROLLER = "LoginServlet";
-    private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
-    private final String DELETE_CONTROLLER = "DeleteServlet";
+    private final String SEARCH_CONTROLLER = "SearchServlet"; 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,26 +34,22 @@ public class DispatchServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE; // default page
-        //1. which button did user click?
-        String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
-        try {
-            if (button == null) {
-                // do nothing
-            } else {
+        String url = LOGIN_PAGE;
+        String button = request.getParameter("btAction");
+        try  {
+            if(button==null){
+                // bằng null thì không làm gì cả
+            }else{
                 switch (button) {
                     case "Login":
                         url = LOGIN_CONTROLLER;
                         break;
                     case "Search":
-                        url = SEARCH_LASTNAME_CONTROLLER;
+                        url = SEARCH_CONTROLLER;
                         break;
-                    case "Delete":
-                        url = DELETE_CONTROLLER;
-
                 }
-            }// first request
-        } finally {
+            }
+        }finally{
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
         }

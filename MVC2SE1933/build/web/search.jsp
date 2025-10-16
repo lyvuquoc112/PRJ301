@@ -24,25 +24,29 @@
             String searchValue = request.getParameter("txtSearchValue");
             if (searchValue != null)
             {
-                List<RegistrationDTO> result = (List<RegistrationDTO>
-                )request.getAttribute("SEARCH_RESULT");
+                List<RegistrationDTO> result = (List<RegistrationDTO>)request.getAttribute("SEARCH_RESULT");
                 if (result != null) {// reach found 
         %>
         <table border="1">
             <thead>
                 <tr>
                     <th>No.</th>
-                    <th>Username</th>
+                    <th>Username</th> 
                     <th>Password</th>
                     <th>Full name</th>
                     <th>Role</th>
-
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
                 <%
                     int count = 0;
                     for (RegistrationDTO dto : result) {
+                    String url = "DispatchServlet"
+                    + "?btAction=delete"
+                    + "&pk="+dto.getUsername() // sau khi xoa thi phai refers, refresh la nhac lai,add them parameter so luong
+                    // tuong ung voi voi o nhap lieu cua truc nang truoc do
+                    +"&lastSearchValue="+searchValue;
                 %>
                 <tr>
                     <td>
@@ -60,7 +64,9 @@
                     <td>
                     ́̃<%=dto.isRole()%>
                     </td>
-
+                     <td>
+                         <a herf ="<%= url %>">Delete</a>
+                    </td>
                 </tr>    
                 <%
                     }//traveser result

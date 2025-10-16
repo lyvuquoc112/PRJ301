@@ -4,8 +4,9 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistrationDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,15 +18,12 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "DispatchServlet", urlPatterns = {"/DispatchServlet"}) // dòng này sẽ là comment nếu
-// cái gì ít thay đổi thì dùng anomytaion
-// cái gì thường xuyên bị thay đổi thì dùng web.xml
-public class DispatchServlet extends HttpServlet {
+@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+public class LoginServlet extends HttpServlet {
 
-    private final String LOGIN_PAGE = "login.html";
-    private final String LOGIN_CONTROLLER = "LoginServlet";
-    private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
-    private final String DELETE_CONTROLLER = "DeleteServlet";
+    private final String INVALID_PAGE = "invalid.html";
+    private final String SEARCH_PAGE = "search.html";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -38,25 +36,19 @@ public class DispatchServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE; // default page
-        //1. which button did user click?
-        String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String url = INVALID_PAGE;
         try {
-            if (button == null) {
-                // do nothing
-            } else {
-                switch (button) {
-                    case "Login":
-                        url = LOGIN_CONTROLLER;
-                        break;
-                    case "Search":
-                        url = SEARCH_LASTNAME_CONTROLLER;
-                        break;
-                    case "Delete":
-                        url = DELETE_CONTROLLER;
-
-                }
-            }// first request
+            RegistrationDAO dao = new RegistrationDAO();
+            boolean result = dao.checkLogin(username, password);
+            if(result==true){
+                url = SEARCH_PAGE;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

@@ -40,11 +40,11 @@ public class SearchLastnameServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = SEARCH_PAGE;
+        String url = SEARCH_PAGE; // nếu mà không nhập gì thì dùng nó để refresh lại trang
         //1. get all user's information
         String searchValue = request.getParameter("txtSearchValue");
         try {
-            if (searchValue.trim().length() > 0) {
+            if (searchValue.trim().length() > 0) { // nếu không thỏa điều kiện thì url vẫn là SEARCH_PAGE
                 //2. Controller call method's controller
                 //2.1 Cotroller create new DAO object
                 RegistrationDAO dao = new RegistrationDAO();
