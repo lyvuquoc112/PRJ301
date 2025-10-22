@@ -3,9 +3,11 @@
     Created on : Oct 13, 2025, 8:51:27 AM
     Author     : hanly
 --%>
-<%@page import="java.util.List"%>
-<%@page import="huylvq.registration.RegistrationDTO"%>
+
+<%-- <%@page import="java.util.List"%> 
+<%@page import="huylvq.registration.RegistrationDTO"%> --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib  uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,8 +15,57 @@
         <title>Search</title>
     </head>
     <body> 
+        
         <h1>Search Page</h1>
         <form action="DispatchServlet">
+            Search value <input type="text" name="txtSearchValue" 
+                                value="${param.txtSearchValue}" /> <br/>
+            <input type="submit" value="Search" name="btAction" />
+        </form> <br/>
+        <c:set var="result" value="${requestScope.SEARCH_RESULT}"/> <%--result o page scope, do default la page scop--%>
+        <c:if test="${not empty result}">
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Full name</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="dto" items="${result}" varStatus="counter">
+                        <tr>
+                            <td>
+                                ${counter.count}                             
+                            </td>
+                            <td>
+                                ${dto.username}     
+                            </td>
+                            <td> 
+                                ${dto.password}
+                            </td>
+                            <td> 
+                                ${dto.fullname}
+                            </td>
+                            <td> 
+                                ${dto.role}
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+
+        </c:if>
+        <c:if test="${empty result}">
+            <h2>
+                <font color ="red">
+                No record is mathced!!!
+                </font>
+            </h2>
+        </c:if>
+        <%-- <form action="DispatchServlet">
             Search value <input type="text" name="txtSearchValue" 
                                 value="<%= request.getParameter("txtSearchValue")%>" /> <br/>
             <input type="submit" value="Search" name="btAction" />
@@ -65,7 +116,7 @@
                     ́̃<%=dto.isRole()%>
                     </td>
                      <td>
-                         <a herf ="<%= url %>">Delete</a>
+                         <a href ="<%= url %>">Delete</a>
                     </td>
                 </tr>    
                 <%
@@ -83,7 +134,7 @@
         </h2>    <%
                 }
             }// search value must be valid
-        %>
+        %>--%>
 
     </body>
 </html>

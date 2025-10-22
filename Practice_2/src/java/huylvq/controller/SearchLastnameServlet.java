@@ -4,14 +4,14 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistraionDTO;
 import huylvq.registration.RegistrationDAO;
-import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,11 +20,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "SearchLastnameServlet", urlPatterns = {"/SearchLastnameServlet"})
 public class SearchLastnameServlet extends HttpServlet {
 
     private final String SEARCH_PAGE = "search.html";
-    private final String SEARCH_RESULT = "search.jsp";
+    private final String SEARCH_RESULT_PAGE = "search.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,22 +37,17 @@ public class SearchLastnameServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = SEARCH_PAGE; // nếu mà không nhập gì thì dùng nó để refresh lại trang
-        //1. get all user's information
-        String searchValue = request.getParameter("txtSearchValue");
+        String url = SEARCH_PAGE;
+        String lastName = request.getParameter("txtSearchValue");
         try {
-            if (searchValue.trim().length() > 0) { // nếu không thỏa điều kiện thì url vẫn là SEARCH_PAGE
-                //2. Controller call method's controller
-                //2.1 Cotroller create new DAO object
+            if (lastName.trim().length() > 0) {
                 RegistrationDAO dao = new RegistrationDAO();
-                //2.2 Controller calls methods of DAP object
-                dao.searchLastname(searchValue);
-                //3.Controller processes result
-                List<RegistrationDTO> result = dao.getAccounts();
-                request.setAttribute("SEARCH_RESULT", result);
-                url = SEARCH_RESULT;
+                dao.search(lastName);
+                List<RegistraionDTO> dto = dao.getAccounts();
+                request.setAttribute("SEARCH_RESULT", dto);
+                url = SEARCH_RESULT_PAGE;
+            }
 
-            }// when search Value is valid input        
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {

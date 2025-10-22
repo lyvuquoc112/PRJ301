@@ -54,6 +54,7 @@ public class DispatchServlet extends HttpServlet {
                         break;
                     case "Delete":
                         url = DELETE_CONTROLLER;
+                        break;
 
                 }
             }// first request
