@@ -78,7 +78,7 @@ public class RegistrationDAO implements Serializable {
         return accounts;
     }
 
-    public void searchLastname(String searchValue)throws SQLException, ClassNotFoundException {
+    public void searchLastname(String searchValue) throws SQLException, ClassNotFoundException {
         //truyền hai tham số username và password
         //return result để chỉnh sửa
         //1.a phải khai báo biến và gán luôn
@@ -98,19 +98,19 @@ public class RegistrationDAO implements Serializable {
                         + "where lastname LIKE ? ";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
                 // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
                 stm = con.prepareStatement(sql);
-                stm.setString(1, "%"+searchValue+ "%");
+                stm.setString(1, "%" + searchValue + "%");
                 // 2.3 Execute Query (R--> ResultSet,voi cau lenh CUD -> integer of row update )
                 // ResultSet is a pointer that point to list.
                 //First item:BOF, Last item: EOF. Use next method to forward(Forward only)
                 rs = stm.executeQuery();
-                while (rs.next()) {                    
+                while (rs.next()) {
                     //2.3.1 model load data from DB
-                    String username =rs.getString("username");
-                    String password =rs.getString("password");
-                    String fullname =rs.getString("lastname");
-                    boolean role =rs.getBoolean("isAdmin");
+                    String username = rs.getString("username");
+                    String password = rs.getString("password");
+                    String fullname = rs.getString("lastname");
+                    boolean role = rs.getBoolean("isAdmin");
                     //2.3.2 model store data to itself
-                    if(this.accounts == null){
+                    if (this.accounts == null) {
                         this.accounts = new ArrayList<>();
                     }// acocounts have not existed
                     RegistrationDTO dto = new RegistrationDTO(username, password, fullname, role);
@@ -128,5 +128,48 @@ public class RegistrationDAO implements Serializable {
                 con.close();// 1.b đóng đối tường bằng mọi cách
             }
         }
+    }
+
+    public boolean deleteAccount(String username) throws SQLException, ClassNotFoundException {
+        boolean result = false;
+        //1.a phải khai báo biến và gán luôn
+        Connection con = null;// delcare variableand set null 
+        PreparedStatement stm = null; //Dòng cho câu lệnh truyền tham số và có điều kiện where, 
+        //prepare không phải chạy lại từ đầu
+        // xoa het cac dong khi biet het username
+        // chỉ thay đổi tham số
+        try {
+            //1. Model connect DB
+            con = DBHelper.getConnection(); // code process object 
+            if (con != null) {
+                //2. Model query Data from DB 
+                // 2.1 create SQL String
+                String sql = "Delete from Registration "
+                        + "where username = ?";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
+                // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
+                stm = con.prepareStatement(sql);
+                stm.setString(1, username); // start 1, because co bao nhieu tham so thi bay nhieu cham hoi, tu trai sang phair
+
+                // 2.3 Execute Query (R--> ResultSet,voi cau lenh CUD(insert, update,delete) -> integer of row update )
+                int effectedRows = stm.executeUpdate(); // insert, udate, delete thi execteUpdate
+                if (effectedRows > 0) {
+                    result = true;
+                }
+                // CUD never related to ResultSet
+                // ResultSet is a pointer that point to list.
+                //First item:BOF, Last item: EOF. Use next method to forward(Forward only)
+                //3. Model load Data from DB to model
+                //4. Model process to return Result
+            } // end connection is available
+        } finally { //close object any way
+
+            if (stm != null) {
+                stm.close();
+            }
+            if (con != null) {
+                con.close();// 1.b đóng đối tường bằng mọi cách
+            }
+        }
+        return result;
     }
 }

@@ -4,8 +4,10 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistrationDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,16 +19,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "DispatchServlet", urlPatterns = {"/DispatchServlet"}) // dòng này sẽ là comment nếu
-// cái gì ít thay đổi thì dùng anomytaion
-// cái gì thường xuyên bị thay đổi thì dùng web.xml
-public class DispatchServlet extends HttpServlet {
+@WebServlet(name = "DeleteAccountServlet", urlPatterns = {"/DeleteAccountServlet"})
+public class DeleteAccountServlet extends HttpServlet {
 
-    private final String LOGIN_PAGE = "login.html";
-    private final String LOGIN_CONTROLLER = "LoginServlet";
-    private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
-    private final String DELETE_ACCOUNT_CONTROLLER = "DeleteAccountServlet";
-    
+    private final String ERROR_PAGE = "errors.html";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -39,29 +36,39 @@ public class DispatchServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE; // default page
-        //1. which button did user click?
-        String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
+        //Servlet không được viết giao diện tĩnh
+        String url = ERROR_PAGE;
+        //Parameter đang ở trong request message ở container
+        //Lấy dữ liệu xuống bằng name của parameter (name của parameter là kiểu String)
+        // hạn chế ghi, nên copy và paste để tránh sai tên
+        //Step 1. get all user's infomation
+        String username = request.getParameter("pk");
+        String searchValue = request.getParameter("lastSearchValue");
         try {
-            if (button == null) {
-                // do nothing
-            } else {
-                switch (button) {
-                    case "Login":
-                        url = LOGIN_CONTROLLER;
-                        break;
-                    case "Search":
-                        url = SEARCH_LASTNAME_CONTROLLER;
-                        break;
-                    case "Delete":
-                        url = DELETE_ACCOUNT_CONTROLLER;
-                        break;
+            //Step 2. controll call method's model
+            // Step 2.1: controller news DAO object
+            RegistrationDAO dao = new RegistrationDAO();
+            // Step 2.2: controller calls method of DAO's object
+            boolean result = dao.deleteAccount(username); // method delete nay nem ve 2 loi (SQLException
+            //va ClassNotFoundException)
+            // Step 3: controller process result   
 
-                }
-            }// first request
+            if (result) {
+                // refresh --> cal previous functional again
+                // -->reminded --> using url rewriting by adding number of request parameters
+                // same as number of input control of previous functional 
+                url = "DispatchServlet"
+                        + "?btAction=Search"
+                        + "&txtSearchValue="+searchValue; // All request must through via DispatchServlet
+                // DispatchServlet distinct user'sactions by paramName btAction, in DispatchServlet
+            }// delete is ok
+        } catch (SQLException ex) { // them catch la boi bi khong duoc them tham so hay
+            // exceoption
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
         } finally {
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
+            response.sendRedirect(url);
         }
     }
 

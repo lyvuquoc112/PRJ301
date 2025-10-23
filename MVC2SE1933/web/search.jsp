@@ -15,7 +15,7 @@
         <title>Search</title>
     </head>
     <body> 
-        
+
         <h1>Search Page</h1>
         <form action="DispatchServlet">
             Search value <input type="text" name="txtSearchValue" 
@@ -32,44 +32,73 @@
                         <th>Password</th>
                         <th>Full name</th>
                         <th>Role</th>
+                        <th>Delete</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tbody>
                     <c:forEach var="dto" items="${result}" varStatus="counter">
+                    <form action="DispatchServlet" method="POST">
                         <tr>
                             <td>
                                 ${counter.count}                             
                             </td>
                             <td>
-                                ${dto.username}     
+                                ${dto.username}    
+                                <input type="hidden" name="txtUsername" 
+                                       value="${dto.username}"/> <!-- de hidden de nguoi dung khong thay 
+                                                                                                   copy past dan vao-->
                             </td>
                             <td> 
-                                ${dto.password}
+                                <input type="text" name="txtPassword" 
+                                       value="${dto.password}" /> <!-- ky thuat pasting control 
+                                Cai nao sua duoc thi nam trong, khong sua duoc thi nam ngoai control-->
                             </td>
                             <td> 
                                 ${dto.fullname}
                             </td>
                             <td> 
-                                ${dto.role}
+                                <input type="checkbox" name="chkAdmin" value="ON"
+                                       <c:if test="${dto.role}">
+                                           checked="checked"
+                                       </c:if>
+                                       /> 
+                                <!-- check duoc check thi param moi ton tai, 
+                                neu ko duoc check thi param khong ton tai
+                                Checkbox duoc check thi phai co checked="checked"
+                                trong database neu la true thi la checked-->
+                            </td>
+                            <td> 
+                                <c:url var ="deleteLink" value="DispatchServlet">
+                                    <c:param name ="btAction" value ="Delete"/> <!--<!-- ctr shif mui ten len de copy va past dong do -->
+                                    <c:param name ="pk" value ="${dto.username}"/>
+                                    <c:param name ="lastSearchValue" value ="${param.txtSearchValue}"/>
+                                </c:url>
+                                <a href="${deleteLink}">Delete</a>
+                            </td>
+                            <td> 
+                                <input type="submit" value="Update" name="btAction" />    
+                                <input type="hidden" name="lastSearchValue" value="${param.txtSearchValue}" />
                             </td>
                         </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
+                    </form>
+                </c:forEach>
+            </tbody>
+        </table>
 
-        </c:if>
-        <c:if test="${empty result}">
-            <h2>
-                <font color ="red">
-                No record is mathced!!!
-                </font>
-            </h2>
-        </c:if>
-        <%-- <form action="DispatchServlet">
-            Search value <input type="text" name="txtSearchValue" 
-                                value="<%= request.getParameter("txtSearchValue")%>" /> <br/>
-            <input type="submit" value="Search" name="btAction" />
-        </form> <br/>
+    </c:if>
+    <c:if test="${empty result}">
+        <h2>
+            <font color ="red">
+            No record is mathced!!!
+            </font>
+        </h2>
+    </c:if>
+    <%-- <form action="DispatchServlet">
+        Search value <input type="text" name="txtSearchValue" 
+                            value="<%= request.getParameter("txtSearchValue")%>" /> <br/>
+        <input type="submit" value="Search" name="btAction" />
+    </form> <br/>
 
         <%
             String searchValue = request.getParameter("txtSearchValue");
@@ -136,5 +165,5 @@
             }// search value must be valid
         %>--%>
 
-    </body>
+</body>
 </html>
