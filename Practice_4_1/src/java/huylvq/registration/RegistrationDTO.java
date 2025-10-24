@@ -4,11 +4,13 @@
  */
 package huylvq.registration;
 
+import java.io.Serializable;
+
 /**
  *
  * @author hanly
  */
-public class RegistrationDTO {
+public class RegistrationDTO implements Serializable{
     private String username;
     private String password;
     private String lastname;

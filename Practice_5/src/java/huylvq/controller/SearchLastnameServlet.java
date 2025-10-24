@@ -4,9 +4,9 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistrationDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,34 +17,28 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "DispatchServlet", urlPatterns = {"/DispatchServlet"})
-public class DispatchServlet extends HttpServlet {
-    private final String LOGIN_PAGE ="login.html";
-    private final String LOGIN_CONTROLLER ="LoginServlet";
-    private final String SEARCH_LASTNAME_CONTROLLER ="SearchLastnameServlet";
-   
+@WebServlet(name = "SearchLastnameServlet", urlPatterns = {"/SearchLastnameServlet"})
+public class SearchLastnameServlet extends HttpServlet {
+    private final String SEARCH_PAGE = "search.html";
+    private final String SEARCH_RESULT_PAGE = "search.jsp";
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE;
-        String button = request.getParameter("btAction");
-        try{
-            if(button==null){
-                
-            }else{
-                switch (button) {
-                    case "Login":
-                        url = LOGIN_CONTROLLER;
-                        break;  
-                    case "Search":
-                        url = SEARCH_LASTNAME_CONTROLLER;
-                        break;
-                        
-                }
-            }
+        String url = SEARCH_PAGE;
+        String searchValue = request.getParameter("txtSearchValue");
+        try {
+            RegistrationDAO dao = new RegistrationDAO();
         }finally{
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
+            
         }
     }
 
