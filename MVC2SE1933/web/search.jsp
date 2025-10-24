@@ -46,8 +46,9 @@
                             <td>
                                 ${dto.username}    
                                 <input type="hidden" name="txtUsername" 
-                                       value="${dto.username}"/> <!-- de hidden de nguoi dung khong thay 
-                                                                                                   copy past dan vao-->
+                                       value="${dto.username}"/> <!-- Để hidden thì user sẽ không thấy được,
+                                tuy rằng không thể thay đổi, nhưng lí do để bên trong là để đưa đến DB, 
+                                nếu không có primary key thì cột password và isAdmin đều sẽ bị thay đổi-->
                             </td>
                             <td> 
                                 <input type="text" name="txtPassword" 
@@ -164,6 +165,5 @@
                 }
             }// search value must be valid
         %>--%>
-
 </body>
 </html>

@@ -144,7 +144,8 @@ public class RegistrationDAO implements Serializable {
             if (con != null) {
                 //2. Model query Data from DB 
                 // 2.1 create SQL String
-                String sql = "Delete from Registration "
+                String sql = "Delete "
+                        + "from Registration "
                         + "where username = ?";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
                 // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
                 stm = con.prepareStatement(sql);
@@ -170,6 +171,51 @@ public class RegistrationDAO implements Serializable {
                 con.close();// 1.b đóng đối tường bằng mọi cách
             }
         }
+        return result;
+    }
+
+    public boolean updateAccount(String username, String password, boolean isAdmin) throws ClassNotFoundException, SQLException {
+        boolean result = false;
+        Connection con = null;// delcare variableand set null 
+        PreparedStatement stm = null; //Dòng cho câu lệnh truyền tham số và có điều kiện where, 
+        //prepare không phải chạy lại từ đầu
+        // xoa het cac dong khi biet het username
+        // chỉ thay đổi tham số
+        try {
+            //1. Model connect DB
+            con = DBHelper.getConnection(); // code process object 
+            if (con != null) {
+                //2. Model query Data from DB 
+                // 2.1 create SQL String
+                String sql = "UPDATE [Registration] "
+                        + "SET [password] = ?, [isAdmin] =? "
+                        + "WHERE [username] = ?";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
+                // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
+                stm = con.prepareStatement(sql);
+                stm.setString(1, password); // start 1, because co bao nhieu tham so thi bay nhieu cham hoi, tu trai sang phair
+                stm.setBoolean(2, isAdmin);
+                stm.setString(3, username);
+                // 2.3 Execute Query (R--> ResultSet,voi cau lenh CUD(insert, update,delete) -> integer of row update )
+                int effectedRows = stm.executeUpdate(); // insert, udate, delete thi execteUpdate
+                if (effectedRows > 0) {
+                    result = true;
+                }
+                // CUD never related to ResultSet
+                // ResultSet is a pointer that point to list.
+                //First item:BOF, Last item: EOF. Use next method to forward(Forward only)
+                //3. Model load Data from DB to model
+                //4. Model process to return Result
+            } // end connection is available
+        } finally { //close object any way
+
+            if (stm != null) {
+                stm.close();
+            }
+            if (con != null) {
+                con.close();// 1.b đóng đối tường bằng mọi cách
+            }
+        }
+
         return result;
     }
 }
