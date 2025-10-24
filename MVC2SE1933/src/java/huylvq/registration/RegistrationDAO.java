@@ -188,7 +188,7 @@ public class RegistrationDAO implements Serializable {
                 //2. Model query Data from DB 
                 // 2.1 create SQL String
                 String sql = "UPDATE [Registration] "
-                        + "SET [password] = ?, [isAdmin] =? "
+                        + "SET [password] = ?, [isAdmin] = ? "
                         + "WHERE [username] = ?";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
                 // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
                 stm = con.prepareStatement(sql);

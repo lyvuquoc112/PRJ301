@@ -30,16 +30,28 @@
                         <th>Lastname</th>
                         <th>isAdmin</th>
                         <th>Delete</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tbody>
                     <c:forEach var="dto" items="${result}" varStatus="counter">
+                    <form action="DispatchServlet" method="POST">
                         <tr>
                             <td>${counter.count}</td>
-                            <td>${dto.username}</td>
-                            <td>${dto.password}</td>
+                            <td>
+                                ${dto.username}
+                                <input type="hidden" name="txtUsername" value="${dto.username}" />
+                            </td>
+                            <td>
+                                <input type="type" name="txtPassword" value="${dto.password}" />
+                            </td>
                             <td>${dto.lastname}</td>
-                            <td>${dto.isAdmin}</td>
+                            <td>
+                                <input type="checkbox" name="chkAdmin" value="ON" 
+                                       <c:if test="${dto.isAdmin}">
+                                           checked="checked"
+                                       </c:if>/>
+                            </td>
                             <td>
                                 <c:url var="deleteLink" value="DispatchServlet"> 
                                     <c:param name="btAction" value="Delete"/>
@@ -48,13 +60,18 @@
                                 </c:url>
                                 <a href="${deleteLink}">Delete</a>
                             </td>
+                            <td>
+                                <input type="submit" value="Update" name="btAction" />
+                                <input type="hidden" name="lastSearchValue" value="${param.txtSearchValue}" />
+                            </td>
                         </tr>
-                    </c:forEach>
-                </tbody>
-            </table>
-        </c:if>
-        <c:if test ="${empty result}">
-            <font color ="red"> Not Matched!!! </font>
-        </c:if>
-    </body>
+                    </form>
+                </c:forEach>
+            </tbody>
+        </table>
+    </c:if>
+    <c:if test ="${empty result}">
+        <font color ="red"> Not Matched!!! </font>
+    </c:if>
+</body>
 </html>

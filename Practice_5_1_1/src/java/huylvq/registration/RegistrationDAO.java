@@ -125,4 +125,34 @@ public class RegistrationDAO {
         }
         return result;
     }
+
+    public boolean updateAccount(String pk, String password, boolean isAdmin) throws ClassNotFoundException, SQLException{
+        boolean result = false;
+        Connection con = null;
+        PreparedStatement pst = null;
+        try {
+            con = DBHelper.getConnection();
+            if (con != null) {
+                String url = "UPDATE [Registration] "
+                        + "SET [password] = ?, [isAdmin] = ? "
+                        + "where [username] = ?";
+                pst = con.prepareStatement(url);
+                pst.setString(1, password);
+                pst.setBoolean(2, isAdmin);
+                pst.setString(3, pk);
+                int effectedRows = pst.executeUpdate();
+                if (effectedRows > 0) {
+                    result = true;
+                }
+            }
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
+        return result;
+    }
 }

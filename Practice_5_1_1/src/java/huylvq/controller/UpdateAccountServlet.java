@@ -4,9 +4,11 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistrationDAO;
+import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.RequestDispatcher;
+import java.sql.SQLException;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,42 +19,45 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author hanly
  */
-@WebServlet(name = "DispatchServlet", urlPatterns = {"/DispatchServlet"})
-public class DispatchServlet extends HttpServlet {
-
-    private final String LOGIN_PAGE = "login.html";
-    private final String LOGIN_CONTROLLER = "LoginServlet";
-    private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
-    private final String DELETE_ACCOUNT_CONTROLLER = "DeleteAccountServlet";
-    private final String  UPDATE_ACCOUNT_CONTROLLER = "UpdateAccountServlet";
-
+@WebServlet(name = "UpdateAccountServlet", urlPatterns = {"/UpdateAccountServlet"})
+public class UpdateAccountServlet extends HttpServlet {
+    private final String ERROR_PAGE = "errors.html";
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = LOGIN_PAGE;
-        String button = request.getParameter("btAction");
-        try {
-            if (button == null) {
-
-            } else {
-                switch (button) {
-                    case "Login":
-                        url = LOGIN_CONTROLLER;
-                        break;
-                    case "Search":
-                        url = SEARCH_LASTNAME_CONTROLLER;
-                        break;
-                    case "Delete":
-                        url = DELETE_ACCOUNT_CONTROLLER;
-                        break;
-                    case "Update":
-                        url = UPDATE_ACCOUNT_CONTROLLER;
-                        break;                       
-                }
+        String username = request.getParameter("txtUsername");
+        String password = request.getParameter("txtPassword");
+        String isAdmin = request.getParameter("chkAdmin");
+        String lastSearchValue = request.getParameter("lastSearchValue");
+        String url = ERROR_PAGE;
+        try{
+            boolean checkAdmin = false;
+            if(isAdmin!=null && isAdmin.equals("ON")){
+                checkAdmin = true;
             }
-        } finally {
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
+            RegistrationDAO dao = new RegistrationDAO();
+            boolean result = dao.updateAccount(username, password, checkAdmin);
+            if(result){
+                url = "DispatchServlet?"
+                        + "btAction=Search&"
+                        + "txtSearchValue="+lastSearchValue;
+            }
+        }catch(ClassNotFoundException ex){
+            ex.printStackTrace();
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        finally{
+            response.sendRedirect(url);
         }
     }
 
