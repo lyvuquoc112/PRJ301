@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,36 +52,4 @@ public class RegistrationDAO {
         return result;
     }
 
-    private List<RegistrationDTO> accounts;
-    
-    
-    public void searchLastname(String value) throws SQLException, ClassNotFoundException {
-        Connection con = null;
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-        try {
-            con = DBHelper.getConnection();
-            if (con != null) {
-                String url = "SELECT [username], [password], [lastname], [isAdmin] "
-                        + "FROM [Registration] "
-                        + "where [lastname] like ?";
-                pst = con.prepareStatement(url);
-                pst.setString(1, "%"+value+"%");
-                rs = pst.executeQuery();
-                while (rs.next()) {
-                    
-                }
-            }
-        } finally {
-            if (rs != null) {
-                rs.close();
-            }
-            if (pst != null) {
-                pst.close();
-            }
-            if (con != null) {
-                con.close();
-            }
-        }
-    }
 }
