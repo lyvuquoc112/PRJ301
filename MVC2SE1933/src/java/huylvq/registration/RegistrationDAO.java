@@ -19,12 +19,14 @@ import java.util.List;
  */
 public class RegistrationDAO implements Serializable {
 
-    public boolean checkLogin(String username, String password)
+//    public boolean checkLogin(String username, String password)
+//            throws SQLException, ClassNotFoundException {
+    public RegistrationDTO checkLogin(String username, String password)
             throws SQLException, ClassNotFoundException {
         //truyền hai tham số username và password
         //return result để chỉnh sửa
 
-        boolean result = false;
+        RegistrationDTO result = null;
 
         //1.a phải khai báo biến và gán luôn
         Connection con = null;// delcare variableand set null 
@@ -38,7 +40,7 @@ public class RegistrationDAO implements Serializable {
             if (con != null) {
                 //2. Model query Data from DB 
                 // 2.1 create SQL String
-                String sql = "select username "
+                String sql = "select [lastname], [isAdmin] "
                         + "from Registration "
                         + "where username = ? "
                         + "and password = ? ";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
@@ -51,10 +53,12 @@ public class RegistrationDAO implements Serializable {
                 //First item:BOF, Last item: EOF. Use next method to forward(Forward only)
                 rs = stm.executeQuery();
                 if (rs.next()) {
-                    //3. Model load Data from DB to model
+                    //3. Model load Data from DB to result
+                    String fullName = rs.getString("lastname");
+                    boolean role =rs.getBoolean("isAdmin");
                     //4. Model process to return Result
-                    result = true;
-                }
+                    result = new RegistrationDTO(username, null, fullName, role); // lưu moi thong tin tru password
+                }// username and password are existed
 
             } // end connection is available
 

@@ -5,14 +5,17 @@
 package huylvq.controller;
 
 import huylvq.registration.RegistrationDAO;
+import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -20,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LoginServlet extends HttpServlet {
 
-    private final String SEARCH_PAGE = "search.html";
+    private final String SEARCH_PAGE = "search.jsp";
     private final String INVALID_PAGE = "invalid.html";
 
     /**
@@ -50,11 +53,18 @@ public class LoginServlet extends HttpServlet {
             // Step 2.1: controller news DAO object
             RegistrationDAO dao = new RegistrationDAO();
             // Step 2.2: controller calls method of DAO's object
-            boolean result = dao.checkLogin(username, password);
+            RegistrationDTO result = dao.checkLogin(username, password);
             // Step 3: Process result   
 
-            if (result) {
+            if (result!=null) {// thể hiện login thành công 
                 url = SEARCH_PAGE;
+                //store session
+                HttpSession session = request.getSession(); // để true bởi là lần đầu tiên
+                session.setAttribute("USERINFO", result);
+                //Store cookies
+                Cookie cookie = new Cookie(username, password);
+                cookie.setMaxAge(3 * 60);
+                response.addCookie(cookie);
             }// username and password are existed
         } catch (SQLException ex) {
             ex.printStackTrace();

@@ -15,7 +15,9 @@
         <title>Search</title>
     </head>
     <body> 
-
+        <font color ="red">
+        Weclome,${sessionScope.USERINFO.fullname} <!--USERINFO có giá trị là registrationDTO-->
+        </font>
         <h1>Search Page</h1>
         <form action="DispatchServlet">
             Search value <input type="text" name="txtSearchValue" 

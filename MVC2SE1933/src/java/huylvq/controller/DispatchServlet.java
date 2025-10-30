@@ -27,7 +27,7 @@ public class DispatchServlet extends HttpServlet {
     private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
     private final String DELETE_ACCOUNT_CONTROLLER = "DeleteAccountServlet";
     private final String UPDATE_ACCOUNT_CONTROLLER ="UpdateAccountServlet";
-    
+    private final String CHECK_COOKIES_CONTROLLER ="CheckCookisServlet";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -45,7 +45,7 @@ public class DispatchServlet extends HttpServlet {
         String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
         try {
             if (button == null) {
-                // do nothing
+                url = CHECK_COOKIES_CONTROLLER;
             } else {
                 switch (button) {
                     case "Login":

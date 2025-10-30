@@ -4,8 +4,12 @@
  */
 package huylvq.controller;
 
+import huylvq.registration.RegistrationDAO;
+import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.SQLException;
+import javax.servlet.Registration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
@@ -20,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(name = "CheckCookisServlet", urlPatterns = {"/CheckCookisServlet"})
 public class CheckCookisServlet extends HttpServlet {
 
+    private final String LOGIN_PAGE = "login.html";
+    private final String SEARCH_PAGE = "search.jsp";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -32,20 +38,42 @@ public class CheckCookisServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        String url = LOGIN_PAGE;
         //1. get all cookies
         Cookie[] cookies = request.getCookies();
+        // đây là code đọc do sử dụng getCookies
+        
         try {
             //2. Check existed cookies
-            if (cookies != null) {
+            if (cookies != null) { // lần đầu tiên thì cho người dùng vào trang login
 
                 //3. Get newest cookies, --> cookies == username,password
+                Cookie newestCookie = cookies[cookies.length - 1]; // lấy phần tử cuối cùng thì lấy kích thước trừ đi 1
+                String username = newestCookie.getName();
+                String password = newestCookie.getValue();
                 //4. Controller calls method of Model
-                    //4.1  controller news DAO object
-                    //4.2 controller calls method of DAO's object
-                //5. Controller process result
-            }// more than one
-        } finally {
+                //4.1  controller news DAO object
+                RegistrationDAO dao = new RegistrationDAO();
 
+                //4.2 controller calls method of DAO's object
+                RegistrationDTO result = dao.checkLogin(username, password);
+                //5. Controller process result
+                if(result!=null){
+                    url = SEARCH_PAGE; // khi đã xác thục người dùng thì cho người dùng vào trang search động, 
+                    // Có câu Hello, username, username này sẽ có sự thay đổi do username dùng để login
+                    // nên dùng trang động
+                }
+            }// more than one
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }catch(ClassNotFoundException ex){
+            ex.printStackTrace();
+        }
+        finally {
+            // hiện tại cookie đang lưu giữ ở file trong server
+            // nên dùng sendRedirect hay RequestDispatcher cũng đươc
+            response.sendRedirect(url);
+            
         }
     }
 
