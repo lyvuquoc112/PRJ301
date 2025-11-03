@@ -26,8 +26,11 @@ public class DispatchServlet extends HttpServlet {
     private final String LOGIN_CONTROLLER = "LoginServlet";
     private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastnameServlet";
     private final String DELETE_ACCOUNT_CONTROLLER = "DeleteAccountServlet";
-    private final String UPDATE_ACCOUNT_CONTROLLER ="UpdateAccountServlet";
-    private final String CHECK_COOKIES_CONTROLLER ="CheckCookisServlet";
+    private final String UPDATE_ACCOUNT_CONTROLLER = "UpdateAccountServlet";
+    private final String CHECK_COOKIES_CONTROLLER = "CheckCookisServlet";
+    private final String LOGOUT_CONTROLLER = "LogoutServlet";
+    private final String CREATE_NEW_ACCOUNT_CONTROLLER = "CreateNewAccountServlet";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -44,13 +47,14 @@ public class DispatchServlet extends HttpServlet {
         //1. which button did user click?
         String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
         try {
-            if (button == null) {
+            if (button == null) {// mới vào thì user chưa làm gì hết, nó sẽ tự động check cookies
                 url = CHECK_COOKIES_CONTROLLER;
-            } else {
+            } else { // đây là user đã tương tác, căn cứ vào nút btAction để gọi đến servlet tương ứng
                 switch (button) {
                     case "Login":
                         url = LOGIN_CONTROLLER;
                         break;
+                    // kiểm tra session, nếu tồn tại thì các chức năng dưới đây mới thực hiện được, về nhà làm
                     case "Search":
                         url = SEARCH_LASTNAME_CONTROLLER;
                         break;
@@ -60,8 +64,14 @@ public class DispatchServlet extends HttpServlet {
                     case "Update":
                         url = UPDATE_ACCOUNT_CONTROLLER;
                         break;
+                    case "logout":
+                        url = LOGOUT_CONTROLLER;
+                        break;
+                    case "Create New Account":
+                        url = CREATE_NEW_ACCOUNT_CONTROLLER;
+                        break;
                 }
-            }// first request
+            }
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

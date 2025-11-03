@@ -25,6 +25,7 @@
         </data>
         <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
             <word>tbl</word>
+            <word>tgl</word>
             <word>tglb</word>
         </spellchecker-wordlist>
     </configuration>

@@ -18,85 +18,96 @@
         <font color ="red">
         Weclome,${sessionScope.USERINFO.fullname} <!--USERINFO có giá trị là registrationDTO-->
         </font>
+        
+        <c:url var="logoutLink" value="DispatchServlet"> <!--tạo một đường link để logout-->
+            <c:param name="btAction" value="logout"/>
+        </c:url>
+        <a href="${logoutLink}">Click here to Sign Out</a>
+        
         <h1>Search Page</h1>
         <form action="DispatchServlet">
             Search value <input type="text" name="txtSearchValue" 
                                 value="${param.txtSearchValue}" /> <br/>
             <input type="submit" value="Search" name="btAction" />
         </form> <br/>
-        <c:set var="result" value="${requestScope.SEARCH_RESULT}"/> <%--result o page scope, do default la page scop--%>
-        <c:if test="${not empty result}">
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>Username</th>
-                        <th>Password</th>
-                        <th>Full name</th>
-                        <th>Role</th>
-                        <th>Delete</th>
-                        <th>Update</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="dto" items="${result}" varStatus="counter">
-                    <form action="DispatchServlet" method="POST">
+        <c:set var ="searchValue" value="${param.txtSearchValue}"/> <!-- lấy value của parama -->
+        <c:if test ="${not empty searchValue}"> <!-- kiểm tra xem có value không, nếu không có nghĩa là người dùng 
+            không nhập gì cả, nên không làm gì hết. Việc load lại trang được thực hiện ở searchLastnameServlet rồi-->
+            <c:set var="result" value="${requestScope.SEARCH_RESULT}"/> <%--result o page scope, do default la page scop--%>
+            <c:if test="${not empty result}">
+                <table border="1">
+                    <thead>
                         <tr>
-                            <td>
-                                ${counter.count}                             
-                            </td>
-                            <td>
-                                ${dto.username}    
-                                <input type="hidden" name="txtUsername" 
-                                       value="${dto.username}"/> <!-- Để hidden thì user sẽ không thấy được,
-                                tuy rằng không thể thay đổi, nhưng lí do để bên trong là để đưa đến DB, 
-                                nếu không có primary key thì cột password và isAdmin đều sẽ bị thay đổi-->
-                            </td>
-                            <td> 
-                                <input type="text" name="txtPassword" 
-                                       value="${dto.password}" /> <!-- ky thuat pasting control 
-                                Cai nao sua duoc thi nam trong, khong sua duoc thi nam ngoai control-->
-                            </td>
-                            <td> 
-                                ${dto.fullname}
-                            </td>
-                            <td> 
-                                <input type="checkbox" name="chkAdmin" value="ON"
-                                       <c:if test="${dto.role}">
-                                           checked="checked"
-                                       </c:if>
-                                       /> 
-                                <!-- check duoc check thi param moi ton tai, 
-                                neu ko duoc check thi param khong ton tai
-                                Checkbox duoc check thi phai co checked="checked"
-                                trong database neu la true thi la checked-->
-                            </td>
-                            <td> 
-                                <c:url var ="deleteLink" value="DispatchServlet">
-                                    <c:param name ="btAction" value ="Delete"/> <!--<!-- ctr shif mui ten len de copy va past dong do -->
-                                    <c:param name ="pk" value ="${dto.username}"/>
-                                    <c:param name ="lastSearchValue" value ="${param.txtSearchValue}"/>
-                                </c:url>
-                                <a href="${deleteLink}">Delete</a>
-                            </td>
-                            <td> 
-                                <input type="submit" value="Update" name="btAction" />    
-                                <input type="hidden" name="lastSearchValue" value="${param.txtSearchValue}" />
-                            </td>
+                            <th>No.</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Full name</th>
+                            <th>Role</th>
+                            <th>Delete</th>
+                            <th>Update</th>
                         </tr>
-                    </form>
-                </c:forEach>
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="dto" items="${result}" varStatus="counter">
+                        <form action="DispatchServlet" method="POST">
+                            <tr>
+                                <td>
+                                    ${counter.count}                             
+                                </td>
+                                <td>
+                                    ${dto.username}    
+                                    <input type="hidden" name="txtUsername" 
+                                           value="${dto.username}"/> <!-- Để hidden thì user sẽ không thấy được,
+                                    tuy rằng không thể thay đổi, nhưng lí do để bên trong là để đưa đến DB, 
+                                    nếu không có primary key thì cột password và isAdmin đều sẽ bị thay đổi-->
+                                </td>
+                                <td> 
+                                    <input type="text" name="txtPassword" 
+                                           value="${dto.password}" /> <!-- ky thuat pasting control 
+                                    Cai nao sua duoc thi nam trong, khong sua duoc thi nam ngoai control-->
+                                </td>
+                                <td> 
+                                    ${dto.fullname}
+                                </td>
+                                <td> 
+                                    <input type="checkbox" name="chkAdmin" value="ON"
+                                           <c:if test="${dto.role}">
+                                               checked="checked"
+                                           </c:if>
+                                           /> 
+                                    <!-- check duoc check thi param moi ton tai, 
+                                    neu ko duoc check thi param khong ton tai
+                                    Checkbox duoc check thi phai co checked="checked"
+                                    trong database neu la true thi la checked-->
+                                </td>
+                                <td> 
+                                    <c:url var ="deleteLink" value="DispatchServlet">
+                                        <c:param name ="btAction" value ="Delete"/> <!--<!-- ctr shif mui ten len de copy va past dong do -->
+                                        <c:param name ="pk" value ="${dto.username}"/>
+                                        <c:param name ="lastSearchValue" value ="${param.txtSearchValue}"/>
+                                    </c:url>
+                                    <a href="${deleteLink}">Delete</a>
+                                </td>
+                                <td> 
+                                    <input type="submit" value="Update" name="btAction" />    
+                                    <input type="hidden" name="lastSearchValue" value="${param.txtSearchValue}" />
+                                </td>
+                            </tr>
+                        </form>
+                    </c:forEach>
+                </tbody>
+            </table>
 
+        </c:if>
+        <c:if test="${empty result}">
+            <h2>
+                <font color ="red">
+                No record is mathced!!!
+                </font>
+            </h2>
+        </c:if>
     </c:if>
-    <c:if test="${empty result}">
-        <h2>
-            <font color ="red">
-            No record is mathced!!!
-            </font>
-        </h2>
-    </c:if>
+
     <%-- <form action="DispatchServlet">
         Search value <input type="text" name="txtSearchValue" 
                             value="<%= request.getParameter("txtSearchValue")%>" /> <br/>

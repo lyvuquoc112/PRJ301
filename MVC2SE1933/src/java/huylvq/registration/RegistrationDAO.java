@@ -222,4 +222,49 @@ public class RegistrationDAO implements Serializable {
 
         return result;
     }
+    
+    public boolean createAccount(RegistrationDTO account)throws SQLException, ClassNotFoundException{ //  trong DB có bao nhiêu cột thì chuyền bây nhiêu tham số 
+        // nếu có hơn 2 tham số thì chuyền dto vào, để dễ chỉnh sửa
+         boolean result = false;
+        //1.a phải khai báo biến và gán luôn
+        Connection con = null;// delcare variableand set null 
+        PreparedStatement stm = null; //Dòng cho câu lệnh truyền tham số và có điều kiện where, 
+        //prepare không phải chạy lại từ đầu
+     
+        try {
+            //1. Model connect DB
+            con = DBHelper.getConnection(); // code process object 
+            if (con != null) {
+                //2. Model query Data from DB 
+                // 2.1 create SQL String
+                String sql = "INSERT INTO [Registration] "
+                        + "([username], [password], [lastname], [isAdmin]) "
+                        + "VALUES "
+                        + "(?, ?, ?, ?)";// Liệt kê user name trong bảng resgistration với điều kiện username = A và password = B
+                // 2.2 load SQL String into Statement object (dùng cho câu lệnh không có tham số, mỗi lần chạy là nạp lại từ đầu)
+                stm = con.prepareStatement(sql);
+                stm.setString(1, account.getUsername());
+                stm.setString(2, account.getPassword());
+                stm.setString(3, account.getFullname());
+                stm.setBoolean(4, account.isRole());
+                // 2.3 Execute Query (R--> ResultSet,voi cau lenh CUD -> integer of row update )
+                // ResultSet is a pointer that point to list.
+                //First item:BOF, Last item: EOF. Use next method to forward(Forward only)
+               int effectRows = stm.executeUpdate();
+               if(effectRows>0){
+                   result = true;
+               }
+              
+            } // end connection is available
+        } finally { //close object any way
+
+            if (stm != null) {
+                stm.close();
+            }
+            if (con != null) {
+                con.close();// 1.b đóng đối tường bằng mọi cách
+            }
+        }
+        return result;
+    }
 }
