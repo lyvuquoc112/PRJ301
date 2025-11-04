@@ -7,24 +7,23 @@ package huylvq.controller;
 import huylvq.registration.RegistrationDAO;
 import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author hanly
  */
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "CheckCookisServlet", urlPatterns = {"/CheckCookisServlet"})
+public class CheckCookiesServlet extends HttpServlet {
 
+    private final String LOGIN_PAGE = "login.html";
     private final String SEARCH_PAGE = "search.jsp";
-    private final String INVALID_PAGE = "invalid.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,47 +37,44 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String url = INVALID_PAGE;
-        //Servlet không được viết giao diện tĩnh
+        String url = LOGIN_PAGE;
+        //1. get all cookies
+        Cookie[] cookies = request.getCookies(); // dùng để lấy danh sách cookies
+        // đây là code đọc, do sử dụng getCookies
 
-        //Parameter đang ở trong request message ở container
-        //Lấy dữ liệu xuống bằng name của parameter (name của parameter là kiểu String)
-        // hạn chế ghi, nên copy và paste để tránh sai tên
-        //Step 1. get all user's infomation
-        String username = request.getParameter("txtUsername");
-        String password = request.getParameter("txtPassword");
         try {
-            //Step 2. controll call method's model
-            // Step 2.1: controller news DAO object
-            RegistrationDAO dao = new RegistrationDAO();
-            // Step 2.2: controller calls method of DAO's object
-            RegistrationDTO result = dao.checkLogin(username, password);
-            // Step 3: Process result   
+            //2. Check existed cookies
+            if (cookies != null) { // nếu danh sách cookies có tồn tại, lấy cookies mới nhất, lấy name và value  của cookies
+                // đó để check xem có tài khoảng không, đổi url sang search.jsp nếu có  tài khoản
+                                    // lần đầu tiên thì cho người dùng vào trang login
 
-            if (result != null) {// thể hiện login thành công 
-                url = SEARCH_PAGE;
-                //store session
-                HttpSession session = request.getSession(); // để true bởi là lần đầu tiên
-                session.setAttribute("USERINFO", result);
-                //Store cookies
-                Cookie cookie = new Cookie(username, password);
-                cookie.setMaxAge(3 * 60);
-                response.addCookie(cookie);
-            }// username and password are existed
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        } catch (ClassNotFoundException ex) {
-//            ex.printStackTrace();
+                //3. Get newest cookies, --> cookies == username,password
+                Cookie newestCookie = cookies[cookies.length - 1]; // lấy phần tử cuối cùng thì lấy kích thước trừ đi 1
+                String username = newestCookie.getName();
+                String password = newestCookie.getValue();
+                //4. Controller calls method of Model
+                //4.1  controller news DAO object
+                RegistrationDAO dao = new RegistrationDAO();
+
+                //4.2 controller calls method of DAO's object
+                RegistrationDTO result = dao.checkLogin(username, password);
+                //5. Controller process result
+                if (result != null) {
+                    url = SEARCH_PAGE; // khi đã xác thục người dùng thì cho người dùng vào trang search động, 
+                    // Có câu Hello, username, username này sẽ có sự thay đổi do username dùng để login
+                    // nên dùng trang động
+                }// nếu không có tài khoản thì giữ nguyên url là login.html
+            }// more than one
+            // nếu danh sách cookies là null thì giữ vẫn url là login.html
         } catch (SQLException ex) {
-            log("LoginServlet_SQL " + ex.getMessage());
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            log("LoginServlet_ClassNotFound " + ex.getMessage());
+            ex.printStackTrace();
         } finally {
-//            response.sendRedirect(url);
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
-            out.close();
+            // hiện tại cookie đang lưu giữ ở file trong server
+            // nên dùng sendRedirect hay RequestDispatcher cũng đươc
+            response.sendRedirect(url);
+
         }
     }
 

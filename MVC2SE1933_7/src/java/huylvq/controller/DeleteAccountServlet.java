@@ -5,26 +5,22 @@
 package huylvq.controller;
 
 import huylvq.registration.RegistrationDAO;
-import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author hanly
  */
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "DeleteAccountServlet", urlPatterns = {"/DeleteAccountServlet"})
+public class DeleteAccountServlet extends HttpServlet {
 
-    private final String SEARCH_PAGE = "search.jsp";
-    private final String INVALID_PAGE = "invalid.html";
+    private final String ERROR_PAGE = "errors.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -38,47 +34,39 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String url = INVALID_PAGE;
         //Servlet không được viết giao diện tĩnh
-
+        String url = ERROR_PAGE;
         //Parameter đang ở trong request message ở container
         //Lấy dữ liệu xuống bằng name của parameter (name của parameter là kiểu String)
         // hạn chế ghi, nên copy và paste để tránh sai tên
         //Step 1. get all user's infomation
-        String username = request.getParameter("txtUsername");
-        String password = request.getParameter("txtPassword");
+        String username = request.getParameter("pk");
+        String searchValue = request.getParameter("lastSearchValue");
         try {
             //Step 2. controll call method's model
             // Step 2.1: controller news DAO object
             RegistrationDAO dao = new RegistrationDAO();
             // Step 2.2: controller calls method of DAO's object
-            RegistrationDTO result = dao.checkLogin(username, password);
-            // Step 3: Process result   
+            boolean result = dao.deleteAccount(username); // method delete nay nem ve 2 loi (SQLException
+            //va ClassNotFoundException)
+            // Step 3: controller process result   
 
-            if (result != null) {// thể hiện login thành công 
-                url = SEARCH_PAGE;
-                //store session
-                HttpSession session = request.getSession(); // để true bởi là lần đầu tiên
-                session.setAttribute("USERINFO", result);
-                //Store cookies
-                Cookie cookie = new Cookie(username, password);
-                cookie.setMaxAge(3 * 60);
-                response.addCookie(cookie);
-            }// username and password are existed
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        } catch (ClassNotFoundException ex) {
-//            ex.printStackTrace();
-        } catch (SQLException ex) {
-            log("LoginServlet_SQL " + ex.getMessage());
+            if (result) {
+                // refresh --> cal previous functional again
+                // -->reminded --> using url rewriting by adding number of request parameters
+                // same as number of input control of previous functional 
+                url = "DispatchServlet"
+                        + "?btAction=Search"
+                        + "&txtSearchValue="+searchValue; // All request must through via DispatchServlet
+                // DispatchServlet distinct user'sactions by paramName btAction, in DispatchServlet
+            }// delete is ok
+        } catch (SQLException ex) { // them catch la boi bi khong duoc them tham so hay
+            // exceoption
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            log("LoginServlet_ClassNotFound " + ex.getMessage());
+            ex.printStackTrace();
         } finally {
-//            response.sendRedirect(url);
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
-            out.close();
+            response.sendRedirect(url);
         }
     }
 

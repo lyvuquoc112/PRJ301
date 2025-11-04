@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
             RegistrationDTO result = dao.checkLogin(username, password);
             // Step 3: Process result   
 
-            if (result != null) {// thể hiện login thành công 
+            if (result!=null) {// thể hiện login thành công 
                 url = SEARCH_PAGE;
                 //store session
                 HttpSession session = request.getSession(); // để true bởi là lần đầu tiên
@@ -66,14 +66,10 @@ public class LoginServlet extends HttpServlet {
                 cookie.setMaxAge(3 * 60);
                 response.addCookie(cookie);
             }// username and password are existed
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        } catch (ClassNotFoundException ex) {
-//            ex.printStackTrace();
         } catch (SQLException ex) {
-            log("LoginServlet_SQL " + ex.getMessage());
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            log("LoginServlet_ClassNotFound " + ex.getMessage());
+            ex.printStackTrace();
         } finally {
 //            response.sendRedirect(url);
             RequestDispatcher rd = request.getRequestDispatcher(url);

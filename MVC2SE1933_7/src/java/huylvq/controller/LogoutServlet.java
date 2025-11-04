@@ -4,14 +4,9 @@
  */
 package huylvq.controller;
 
-import huylvq.registration.RegistrationDAO;
-import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,10 +16,10 @@ import javax.servlet.http.HttpSession;
  *
  * @author hanly
  */
-public class LoginServlet extends HttpServlet {
+@WebServlet(name = "LogoutServlet", urlPatterns = {"/LogoutServlet"})
+public class LogoutServlet extends HttpServlet {
 
-    private final String SEARCH_PAGE = "search.jsp";
-    private final String INVALID_PAGE = "invalid.html";
+    private final String LOGIN_PAGE = "login.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,50 +30,24 @@ public class LoginServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    // không tồn tại thì chuyển về login.html
+    // Có tồn tại thì huy rồi chuyển về login.html
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-        String url = INVALID_PAGE;
-        //Servlet không được viết giao diện tĩnh
-
-        //Parameter đang ở trong request message ở container
-        //Lấy dữ liệu xuống bằng name của parameter (name của parameter là kiểu String)
-        // hạn chế ghi, nên copy và paste để tránh sai tên
-        //Step 1. get all user's infomation
-        String username = request.getParameter("txtUsername");
-        String password = request.getParameter("txtPassword");
+        String url = LOGIN_PAGE;
+        //1. Get current session
+        HttpSession session = request.getSession(false);
         try {
-            //Step 2. controll call method's model
-            // Step 2.1: controller news DAO object
-            RegistrationDAO dao = new RegistrationDAO();
-            // Step 2.2: controller calls method of DAO's object
-            RegistrationDTO result = dao.checkLogin(username, password);
-            // Step 3: Process result   
+            //2. Check existed curent sesion 
+            if (session != null) {
+                //3. Destroy session
+                session.invalidate(); // hủy session
+            }// sesion has existed
 
-            if (result != null) {// thể hiện login thành công 
-                url = SEARCH_PAGE;
-                //store session
-                HttpSession session = request.getSession(); // để true bởi là lần đầu tiên
-                session.setAttribute("USERINFO", result);
-                //Store cookies
-                Cookie cookie = new Cookie(username, password);
-                cookie.setMaxAge(3 * 60);
-                response.addCookie(cookie);
-            }// username and password are existed
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        } catch (ClassNotFoundException ex) {
-//            ex.printStackTrace();
-        } catch (SQLException ex) {
-            log("LoginServlet_SQL " + ex.getMessage());
-        } catch (ClassNotFoundException ex) {
-            log("LoginServlet_ClassNotFound " + ex.getMessage());
+            //4. Transfer to Login Page
         } finally {
-//            response.sendRedirect(url);
-            RequestDispatcher rd = request.getRequestDispatcher(url);
-            rd.forward(request, response);
-            out.close();
+            response.sendRedirect(url);
         }
     }
 

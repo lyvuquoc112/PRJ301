@@ -54,10 +54,14 @@ public class SearchLastnameServlet extends HttpServlet {
                 url = SEARCH_RESULT;
 
             }// when search Value is valid input        
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        } catch (ClassNotFoundException ex) {
+//            ex.printStackTrace();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log("SearchLastnameServlet_SQL " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            log("SearchLastnameServlet_ClassNotFound " + ex.getMessage());
         } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);

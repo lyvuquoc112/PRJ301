@@ -52,10 +52,14 @@ public class UpdateAccountServlet extends HttpServlet {
                         + "btAction=Search&"
                         + "txtSearchValue=" + lastSearchValue;
             }
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        } catch (ClassNotFoundException ex) {
+//            ex.printStackTrace();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log("UpdateAccountServlet_SQL " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            log("UpdateAccountServlet_ClassNotFound " + ex.getMessage());
         } finally {
             response.sendRedirect(url);
         }

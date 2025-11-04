@@ -46,7 +46,7 @@ public class CheckCookiesServlet extends HttpServlet {
             //2. Check existed cookies
             if (cookies != null) { // nếu danh sách cookies có tồn tại, lấy cookies mới nhất, lấy name và value  của cookies
                 // đó để check xem có tài khoảng không, đổi url sang search.jsp nếu có  tài khoản
-                                    // lần đầu tiên thì cho người dùng vào trang login
+                // lần đầu tiên thì cho người dùng vào trang login
 
                 //3. Get newest cookies, --> cookies == username,password
                 Cookie newestCookie = cookies[cookies.length - 1]; // lấy phần tử cuối cùng thì lấy kích thước trừ đi 1
@@ -66,10 +66,14 @@ public class CheckCookiesServlet extends HttpServlet {
                 }// nếu không có tài khoản thì giữ nguyên url là login.html
             }// more than one
             // nếu danh sách cookies là null thì giữ vẫn url là login.html
+//        } catch (SQLException ex) {
+//            ex.printStackTrace();
+//        } catch (ClassNotFoundException ex) {
+//            ex.printStackTrace();
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log("CheckCookiesServlet_SQL " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            log("CheckCookiesServlet_ClassNotFound " + ex.getMessage());
         } finally {
             // hiện tại cookie đang lưu giữ ở file trong server
             // nên dùng sendRedirect hay RequestDispatcher cũng đươc

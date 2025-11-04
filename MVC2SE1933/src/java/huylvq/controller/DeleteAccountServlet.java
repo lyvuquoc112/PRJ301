@@ -57,14 +57,18 @@ public class DeleteAccountServlet extends HttpServlet {
                 // same as number of input control of previous functional 
                 url = "DispatchServlet"
                         + "?btAction=Search"
-                        + "&txtSearchValue="+searchValue; // All request must through via DispatchServlet
+                        + "&txtSearchValue=" + searchValue; // All request must through via DispatchServlet
                 // DispatchServlet distinct user'sactions by paramName btAction, in DispatchServlet
             }// delete is ok
-        } catch (SQLException ex) { // them catch la boi bi khong duoc them tham so hay
-            // exceoption
-            ex.printStackTrace();
+//        } catch (SQLException ex) { // them catch la boi bi khong duoc them tham so hay
+//            // exceoption
+//            ex.printStackTrace();
+//        } catch (ClassNotFoundException ex) {
+//            ex.printStackTrace();
+        } catch (SQLException ex) {
+            log("DeleteAccountServlet_SQL " + ex.getMessage());
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            log("DeleteAccountServlet_ClassNotFound " + ex.getMessage());
         } finally {
             response.sendRedirect(url);
         }
