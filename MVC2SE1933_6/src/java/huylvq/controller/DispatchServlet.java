@@ -4,7 +4,6 @@
  */
 package huylvq.controller;
 
-import huylvq.registration.RegistrationDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
@@ -13,7 +12,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -30,7 +28,6 @@ public class DispatchServlet extends HttpServlet {
     private final String DELETE_ACCOUNT_CONTROLLER = "DeleteAccountServlet";
     private final String UPDATE_ACCOUNT_CONTROLLER = "UpdateAccountServlet";
     private final String CHECK_COOKIES_CONTROLLER = "CheckCookisServlet";
-
     private final String LOGOUT_CONTROLLER = "LogoutServlet";
     private final String CREATE_NEW_ACCOUNT_CONTROLLER = "CreateNewAccountServlet";
 
@@ -47,26 +44,12 @@ public class DispatchServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = LOGIN_PAGE; // default page
-        boolean loggedIn = false;// đăng nhập chưa
         //1. which button did user click?
         String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("USERINFO") != null) {
-            loggedIn = true;
-        }
         try {
             if (button == null) {// mới vào thì user chưa làm gì hết, nó sẽ tự động check cookies
                 url = CHECK_COOKIES_CONTROLLER;
-            } else if (!loggedIn) { // chưa login
-                switch (button) {
-                    case "Login":
-                        url = LOGIN_CONTROLLER;
-                        break;
-                    case "Create New Account":
-                        url = CREATE_NEW_ACCOUNT_CONTROLLER;
-                        break;
-                }
-            } else {// đã login
+            } else { // đây là user đã tương tác, căn cứ vào nút btAction để gọi đến servlet tương ứng
                 switch (button) {
                     case "Login":
                         url = LOGIN_CONTROLLER;
@@ -93,47 +76,19 @@ public class DispatchServlet extends HttpServlet {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
         }
-    
-//            else { // đây là user đã tương tác, căn cứ vào nút btAction để gọi đến servlet tương ứng
-//
-//                switch (button) {
-//                    case "Login":
-//                        url = LOGIN_CONTROLLER;
-//                        break;
-//                    // kiểm tra session, nếu tồn tại thì các chức năng dưới đây mới thực hiện được, về nhà làm
-//                    case "Search":
-//                        url = SEARCH_LASTNAME_CONTROLLER;
-//                        break;
-//                    case "Delete":
-//                        url = DELETE_ACCOUNT_CONTROLLER;
-//                        break;
-//                    case "Update":
-//                        url = UPDATE_ACCOUNT_CONTROLLER;
-//                        break;
-//                    case "logout":
-//                        url = LOGOUT_CONTROLLER;
-//                        break;
-//                    case "Create New Account":
-//                        url = CREATE_NEW_ACCOUNT_CONTROLLER;
-//                        break;
-//                }
-//            }
-//        } finally {
-//            RequestDispatcher rd = request.getRequestDispatcher(url);
-//            rd.forward(request, response);
-//        }
     }
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-/**
- * Handles the HTTP <code>GET</code> method.
- *
- * @param request servlet request
- * @param response servlet response
- * @throws ServletException if a servlet-specific error occurs
- * @throws IOException if an I/O error occurs
- */
-@Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -147,7 +102,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
      * @throws IOException if an I/O error occurs
      */
     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
@@ -158,7 +113,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
      * @return a String containing servlet description
      */
     @Override
-public String getServletInfo() {
+    public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
 
