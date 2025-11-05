@@ -8,6 +8,7 @@
 <%@page import="huylvq.registration.RegistrationDTO"%> --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib  uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,12 +19,12 @@
         <font color ="red">
         Weclome,${sessionScope.USERINFO.fullname} <!--USERINFO có giá trị là registrationDTO-->
         </font>
-        
+
         <c:url var="logoutLink" value="DispatchServlet"> <!--tạo một đường link để logout-->
             <c:param name="btAction" value="logout"/>
         </c:url>
         <a href="${logoutLink}">Click here to Sign Out</a>
-        
+
         <h1>Search Page</h1>
         <form action="DispatchServlet">
             Search value <input type="text" name="txtSearchValue" 

@@ -50,7 +50,7 @@ public class DispatchServlet extends HttpServlet {
         boolean loggedIn = false;// đăng nhập chưa
         //1. which button did user click?
         String button = request.getParameter("btAction"); // tất cả mọi button của form đều có name là btAction
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession(false); // lấy session
         if (session != null && session.getAttribute("USERINFO") != null) {
             loggedIn = true;
         }
