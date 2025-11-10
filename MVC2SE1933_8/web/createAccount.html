@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html>
+    <head>
+        <title>Create</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <h1>Create Account</h1>
+        <form action="DispatchServlet" method="POST">
+            Username* <input type="text" name="txtUsername" value="" />(6-20 characters)<br/> <!--có dấu sao là giá trị bắt buộc-->
+            Password* <input type="password" name="txtPassword" value="" />(6-30 characters)<br/>
+            Confirm* <input type="password" name="txtConfrim" value="" /><br/>
+            Full name* <input type="text" name="txtFullname" value="" />(2-50 characters)<br/>   
+            <input type="submit" value="Create New Account" name="btAction" />
+            <input type="reset" value="Reset" />
+            <!--username quá ngắn hoặc quá dài
+            username đã tồn tai rồi
+            pasword quá ngắn hoặc quá dài
+            confirm ko đúng với pasword
+            full name quá ngắn hoặc quá dài
+            bước 1: xác định lỗi
+            bước 2: lỗi nào của user và lỗi nào của system
+            -->
+        </form>
+          
+    </body>
+</html>
