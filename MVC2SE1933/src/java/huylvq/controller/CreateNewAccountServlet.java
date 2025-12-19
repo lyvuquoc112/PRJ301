@@ -86,6 +86,7 @@ public class CreateNewAccountServlet extends HttpServlet {
                 // Step 4 Process result   
                 if(result){
                     url = LOGIN_PAGE;
+                    request.setAttribute("CREATE_MESSAGE", "Created successfully");
                 }// create account is successful
             }// no erro
 
@@ -95,7 +96,7 @@ public class CreateNewAccountServlet extends HttpServlet {
             if(errMsg.contains("duplicate")){ // lỗi hệ thống thì đọc ở SQLException
                 errors.setUsernameIsExisted(username +" is existed"); // đang gán lỗi cho errors object
                 request.setAttribute("CREATE_ERROR", errors); // bất kỳ có sự thay đổi nào thì 
-                //phải update lại attribute
+                //phải update lại attributew
             }
         } catch (ClassNotFoundException ex) {
             log("CreateNewAccountServlet_ClassNotFound" + ex.getMessage());

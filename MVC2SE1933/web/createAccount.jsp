@@ -49,9 +49,9 @@
                 </font><br/>
             </c:if>
             <input type="submit" value="Create New Account" name="btAction" />
-            <input type="submit" value="Reset" />
+            <input type="reset" value="Reset" />
         </form>
         <br/><!-- comment -->
-       
+        
     </body>
 </html>
